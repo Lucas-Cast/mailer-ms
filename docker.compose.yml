@@ -3,6 +3,8 @@ services:
   mailer:
     container_name: 'mailer-microservice'
     build: .
+    env_file:
+      - .env.docker
     depends_on:
       - mailer-postgres
     ports:
