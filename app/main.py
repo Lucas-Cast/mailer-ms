@@ -4,12 +4,16 @@ from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 
 from app.core.db import create_tables, shutdown_engine
+from app.core.seeds import run_seeds
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await create_tables()
+    await run_seeds()
+
     yield
+
     await shutdown_engine()
 
 
