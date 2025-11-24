@@ -1,0 +1,15 @@
+name: 'mailer-microservice'
+services:
+  mailer:
+    container_name: 'mailer-microservice'
+    build: .
+    depends_on:
+      - mailer-postgres
+    ports:
+      - "8009:8000"
+  mailer-postgres:
+    image: 'postgres:17.2-alpine'
+    env_file:
+      - .env.docker
+    ports:
+      - "5432:5432"
