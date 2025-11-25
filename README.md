@@ -6,4 +6,4 @@ python -m venv .venv
 
 pip install -r requirements.txt
 
-uvicorn src.app.main:app --port 8009
+uvicorn src.app.main:app --port 8009 --reload

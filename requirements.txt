@@ -1,5 +1,6 @@
 asyncio==4.0.0
 fastapi==0.121.3
+fastapi-mail==1.5.8
 uvicorn==0.38.0
 pydantic==2.12.4
 sqlmodel==0.0.27

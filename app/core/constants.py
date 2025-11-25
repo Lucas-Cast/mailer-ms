@@ -1,0 +1,2 @@
+DEFAULT_MAIL_SERVICE = "smtp.gmail.com"
+DEFAULT_MAIL_PORT = 587
