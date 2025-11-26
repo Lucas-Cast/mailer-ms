@@ -34,3 +34,8 @@ TNotificationRequest = TypeVar(
 
 
 SendNotificationPayload = EmailNotificationRequest | SMSNotificationRequest
+
+
+class MessageBrokerPayload(CamelCaseModel):
+    log_id: str
+    payload: SendNotificationPayload

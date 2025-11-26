@@ -10,6 +10,14 @@ services:
       - rabbitmq
     ports:
       - "8009:8000"
+  workers:
+    container_name: 'mailer-workers'
+    build: .
+    command: python -m app.workers.consumer
+    env_file:
+      - .env.docker
+    depends_on:
+      - mailer
   mailer-postgres:
     image: 'postgres:17.2-alpine'
     env_file:

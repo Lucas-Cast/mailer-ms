@@ -1,9 +1,8 @@
-from uuid import UUID, uuid4
 from sqlmodel import Field
 
 from app.core.base_models import BaseSQLModel
 
 
 class NotificationType(BaseSQLModel, table=True):
-    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    id: str | None = Field(primary_key=True, default=None)
     name: str = Field(const=True, unique=True)
