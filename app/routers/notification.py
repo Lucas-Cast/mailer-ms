@@ -13,7 +13,7 @@ router: APIRouter = APIRouter()
 @router.post(
     "/send",
 )
-async def send_notification(
+def send_notification(
     payload: Annotated[
         SendNotificationPayload,
         Body(
@@ -23,4 +23,4 @@ async def send_notification(
     ],
     notification_service: NotificationService = Depends(),
 ):
-    return await notification_service.send_notification(payload)
+    return notification_service.publish_notification(payload)

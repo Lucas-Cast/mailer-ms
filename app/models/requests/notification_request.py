@@ -1,5 +1,7 @@
 from typing import Literal, TypeVar
+
 from pydantic import NameEmail
+
 from app.core.base_models import CamelCaseModel
 from app.core.constants import DEFAULT_MAIL_PORT, DEFAULT_MAIL_SERVICE
 from app.models.enums.notification_type_enum import NotificationTypeEnum
