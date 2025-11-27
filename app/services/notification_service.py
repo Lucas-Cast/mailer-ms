@@ -31,8 +31,8 @@ class NotificationService:
         json_payload = MessageBrokerPayload(
             log_id=log_id, payload=payload
         ).model_dump_json(by_alias=True)
-        print()
-        self._broker.publish(json_payload)
+
+        await self._broker.publish(json_payload)
 
         return f"Published notification: {json_payload}"
 

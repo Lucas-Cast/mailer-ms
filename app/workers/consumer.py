@@ -1,9 +1,7 @@
 import asyncio
 import json
-from typing import Any
 
-from pika.adapters.blocking_connection import BlockingChannel
-from pika.spec import Basic, BasicProperties
+from aio_pika.message import IncomingMessage
 from pydantic import TypeAdapter
 
 from app.core.broker import BrokerClient
@@ -18,7 +16,9 @@ notification_type_adapter: TypeAdapter[MessageBrokerPayload] = TypeAdapter(
 )
 
 
-async def process_notification_task(raw_payload: dict[str, Any]) -> None:
+async def process_notification_task(message: IncomingMessage) -> None:
+    raw_payload = json.loads(message.body.decode())
+
     async with async_session_factory() as session:
         broker = BrokerClient()
 
@@ -29,23 +29,9 @@ async def process_notification_task(raw_payload: dict[str, Any]) -> None:
         service = NotificationService(session=session, broker=broker)
 
         await service.send_notification(log_id=payload.log_id, payload=payload.payload)
-
-
-def on_message(
-    ch: BlockingChannel, method: Basic.Deliver, properties: BasicProperties, body: bytes
-) -> None:
-    try:
-        message_data = json.loads(body)
-
-        asyncio.run(process_notification_task(message_data))
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-        print(f" [x] Processed message delivery tag: {method.delivery_tag}")
-
-    except Exception as e:
-        print(f"Error: {e}")
-        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
+        print("[V] Notification successfully sent")
 
 
 if __name__ == "__main__":
     broker = BrokerClient()
-    broker.consume(on_message)
+    asyncio.run(broker.consume(process_notification_task))

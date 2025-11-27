@@ -1,8 +1,8 @@
-import json
-from collections.abc import Callable
+from collections.abc import Callable, Coroutine
 from typing import Any
 
-from pika import BasicProperties, BlockingConnection, URLParameters
+from aio_pika import Message, connect_robust
+from aio_pika.abc import AbstractRobustConnection
 
 from app.core.constants import BROKER_URL, QUEUE_NAME
 
@@ -12,57 +12,48 @@ class BrokerClient:
         self._url: str = BROKER_URL
         self._queue_name: str = QUEUE_NAME
 
-    def _get_connection(self) -> BlockingConnection:
-        params = URLParameters(self._url)
-        return BlockingConnection(params)
+    async def _get_connection(
+        self,
+    ) -> AbstractRobustConnection:
+        return await connect_robust(self._url)
 
-    def publish(self, message: dict[str, Any] | str) -> None:
+    async def publish(self, message: str) -> None:
         connection = None
         try:
-            connection = self._get_connection()
-            channel = connection.channel()
+            connection = await self._get_connection()
 
-            channel.queue_declare(queue=self._queue_name, durable=True)
+            async with connection:
+                routing_key = self._queue_name
 
-            if isinstance(message, dict):
-                body = json.dumps(message)
-            else:
-                body = message
+                channel = await connection.channel()
 
-            channel.basic_publish(
-                exchange="",
-                routing_key=self._queue_name,
-                body=body,
-                properties=BasicProperties(
-                    delivery_mode=2,
-                    content_type="application/json",
-                ),
-            )
+                await channel.declare_queue(self._queue_name, durable=True)
+
+                await channel.default_exchange.publish(
+                    message=Message(body=message.encode()),
+                    routing_key=routing_key,
+                )
 
         except Exception as e:
             print(f" [!] Error publishing to queue: {e}")
             raise e
-        finally:
-            if connection and connection.is_open:
-                connection.close()
 
-    def consume(self, callback_function: Callable[..., None]) -> None:
+    async def consume(
+        self, callback_function: Callable[..., Coroutine[Any, Any, None]]
+    ) -> None:
         print(f" [*] Connecting to queue '{self._queue_name}'...")
-        connection = self._get_connection()
-        channel = connection.channel()
+        connection = await self._get_connection()
 
-        channel.queue_declare(queue=self._queue_name, durable=True)
+        async with connection:
+            channel = await connection.channel()
 
-        channel.basic_qos(prefetch_count=1)
+            await channel.set_qos(prefetch_count=1)
 
-        channel.basic_consume(
-            queue=self._queue_name, on_message_callback=callback_function
-        )
+            queue = await channel.declare_queue(self._queue_name, durable=True)
+
+            async with queue.iterator() as queue_iter:
+                async for message in queue_iter:
+                    async with message.process():
+                        await callback_function(message)
 
         print(" [*] Waiting for messages.")
-        try:
-            channel.start_consuming()
-        except KeyboardInterrupt:
-            print(" [!] Stopping consumer...")
-            channel.stop_consuming()
-            connection.close()
