@@ -32,9 +32,17 @@ class NotificationService:
             log_id=log_id, payload=payload
         ).model_dump_json(by_alias=True)
 
-        await self._broker.publish(json_payload)
+        try:
+            await self._broker.publish(json_payload)
+            return f"Published notification: {json_payload}"
 
-        return f"Published notification: {json_payload}"
+        except Exception as e:
+            await self.update_log_status(
+                log_id=log_id,
+                notification_status=NotificationStatusEnum.FAILED,
+                error_message=str(e),
+            )
+            raise
 
     async def send_notification(
         self,

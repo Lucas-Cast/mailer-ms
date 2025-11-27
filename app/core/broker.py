@@ -45,6 +45,7 @@ class BrokerClient:
         connection = await self._get_connection()
 
         async with connection:
+            print(" [*] Connected.")
             channel = await connection.channel()
 
             await channel.set_qos(prefetch_count=1)
