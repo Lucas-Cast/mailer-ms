@@ -12,11 +12,10 @@
       "console": "integratedTerminal"
     },
     {
-      "name": "Pytest: Current File",
+      "name": "Python: Workers",
       "type": "python",
       "request": "launch",
-      "module": "pytest",
-      "args": ["${relativeFileDirname}"],
+      "module": "app.workers.consumer",
       "justMyCode": true
     }
   ]

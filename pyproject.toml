@@ -29,6 +29,7 @@ ignore = [
     "B904", # Allow raising exceptions without from e, for HTTPException
     "E501", # line too long, handled by black
     "W191", # indentation contains tabs
+    "E731", # Do not assign a `lambda` expression, use a `def`
 ]
 
 [tool.ruff.lint.pyupgrade]

@@ -42,7 +42,7 @@ class NotificationService:
                 notification_status=NotificationStatusEnum.FAILED,
                 error_message=str(e),
             )
-            raise
+            raise e
 
     async def send_notification(
         self,
@@ -51,18 +51,16 @@ class NotificationService:
     ) -> None:
         notification_strategy = get_notification_strategy(payload)
 
+        await notification_strategy.send_notification(payload)
+
         try:
-            await notification_strategy.send_notification(payload)
             await self.update_log_status(
                 log_id=log_id, notification_status=NotificationStatusEnum.SENT
             )
         except Exception as e:
-            await self.update_log_status(
-                log_id=log_id,
-                notification_status=NotificationStatusEnum.FAILED,
-                error_message=str(e),
+            print(
+                f"Failed to update log status after sending notification for log {log_id}: {e}"
             )
-            raise
 
     async def log_notification(
         self,
