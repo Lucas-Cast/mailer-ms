@@ -55,6 +55,7 @@ class BrokerClient:
 
             async with connection:
                 channel = await connection.channel()
+                await self._declare_dead_letter_queue(channel)
                 await self._declare_main_queue(channel)
 
                 await channel.default_exchange.publish(

@@ -8,3 +8,4 @@ sqlalchemy==2.0.44
 asyncpg==0.30.0
 python-dotenv==1.2.1
 aio-pika==9.5.8
+twilio==9.8.7

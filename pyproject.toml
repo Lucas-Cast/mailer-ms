@@ -5,6 +5,7 @@ venv = ".venv"
 # Pyright Rules Overrides
 reportMissingFunctionReturnType = "error"
 reportUnknownMemberType = "warning"
+reportMissingTypeStubs = "warning"
 
 [tool.ruff]
 target-version = "py311"

@@ -1,7 +1,7 @@
 import asyncio
 import json
-from collections.abc import Callable
-from typing import Any, Coroutine
+from collections.abc import Callable, Coroutine
+from typing import Any
 
 from aio_pika.message import IncomingMessage
 from pydantic import TypeAdapter

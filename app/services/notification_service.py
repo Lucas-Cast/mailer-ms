@@ -1,4 +1,5 @@
 from fastapi import Depends
+from pydantic import NameEmail
 from sqlalchemy import update
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -68,9 +69,15 @@ class NotificationService:
         notification_status: NotificationStatusEnum = NotificationStatusEnum.PENDING,
         error_message: str | None = None,
     ) -> str:
+        recipient_str = (
+            payload.recipient.email
+            if isinstance(payload.recipient, NameEmail)
+            else str(payload.recipient)
+        )
+
         notification_log = NotificationLog(
-            body=payload.body,
-            recipient=payload.recipient.email,
+            body=payload.body or "",
+            recipient=recipient_str,
             notification_type_id=payload.type,
             notification_status_id=notification_status,
             error_message=error_message,

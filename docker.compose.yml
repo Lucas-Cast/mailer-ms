@@ -18,6 +18,7 @@ services:
       - .env.docker
     depends_on:
       - mailer
+      - rabbitmq
   mailer-postgres:
     image: 'postgres:17.2-alpine'
     env_file:
