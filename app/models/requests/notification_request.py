@@ -42,12 +42,12 @@ class EmailNotificationRequest(BaseNotificationRequest):
 class SMSNotificationRequest(BaseNotificationRequest):
     type: Literal[NotificationTypeEnum.SMS]
 
-    provider: str
     recipient_phone_number: str = Field(pattern=r"^\+[1-9]\d{1,14}$")
+    sms_body: str
 
     @property
     def body(self) -> str:
-        return self.body
+        return self.sms_body
 
     @property
     def recipient(self) -> str:

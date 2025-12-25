@@ -20,6 +20,7 @@ class Settings(BaseModel):
     twilio_account_sid: str = get_env_or_throw("TWILIO_ACCOUNT_SID")
     twilio_auth_token: str = get_env_or_throw("TWILIO_AUTH_TOKEN")
     whatsapp_sender_number: str = get_env_or_throw("WHATSAPP_SENDER_NUMBER")
+    sms_sender_number: str = get_env_or_throw("SMS_SENDER_NUMBER")
 
 
 env_variables = Settings()

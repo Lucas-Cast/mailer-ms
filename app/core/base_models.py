@@ -1,8 +1,9 @@
 import re
+
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
-from sqlmodel import SQLModel
 from sqlalchemy.orm import declared_attr
+from sqlmodel import SQLModel
 
 
 class CamelCaseModel(BaseModel):

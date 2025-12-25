@@ -19,8 +19,8 @@ email_notification_dummy = EmailNotificationRequest(
 
 sms_notification_dummy = SMSNotificationRequest(
     type=NotificationTypeEnum.SMS,
-    recipient_phone_number="+5511999999999",
-    provider="Twilio",
+    recipient_phone_number="+16302339970",
+    sms_body="SMS body content...",
 ).model_dump(by_alias=True)
 
 whatsapp_notification_dummy = WhatsappNotificationRequest(
