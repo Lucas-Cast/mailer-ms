@@ -6,6 +6,8 @@ from app.core.settings import env_variables
 def create_email_connection_config(
     mail_port: int, mail_server: str, mail_from_name: str
 ) -> ConnectionConfig:
+    use_ssl = mail_port == 465
+
     return ConnectionConfig(
         MAIL_USERNAME=env_variables.mail_username,
         MAIL_PASSWORD=SecretStr(env_variables.mail_password),
@@ -13,8 +15,8 @@ def create_email_connection_config(
         MAIL_PORT=mail_port,
         MAIL_SERVER=mail_server,
         MAIL_FROM_NAME=mail_from_name,
-        MAIL_STARTTLS=True,
-        MAIL_SSL_TLS=False,
+        MAIL_STARTTLS=not use_ssl,
+        MAIL_SSL_TLS=use_ssl,
         USE_CREDENTIALS=True,
         VALIDATE_CERTS=True,
     )
