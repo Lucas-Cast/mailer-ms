@@ -23,6 +23,9 @@ class Settings(BaseModel):
     sms_sender_number: str = get_env_or_throw("SMS_SENDER_NUMBER")
     brevo_api_key: str = get_env_or_throw("BREVO_API_KEY")
     brevo_api_url: str = get_env_or_throw("BREVO_API_URL")
+    jwt_secret_key: str = get_env_or_throw("JWT_SECRET_KEY")
+    jwt_algorithm: str = get_env_or_throw("JWT_ALGORITHM")
+    app_feature_name: str = get_env_or_throw("APP_FEATURE_NAME")
 
 
 env_variables = Settings()

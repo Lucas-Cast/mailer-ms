@@ -1,8 +1,9 @@
 import asyncio
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.concurrency import asynccontextmanager
 
+from app.core.auth import get_current_user
 from app.core.db import create_tables, shutdown_engine
 from app.core.seeds import run_seeds
 from app.routers.notification import router as notifications_router
@@ -30,7 +31,7 @@ async def lifespan(app: FastAPI):
     await shutdown_engine()
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan, dependencies=[Depends(get_current_user)])
 
 
 app.include_router(

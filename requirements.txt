@@ -10,3 +10,4 @@ python-dotenv==1.2.1
 aio-pika==9.5.8
 twilio==9.8.7
 httpx==0.26.0
+python-jose[cryptography]==3.5.0
