@@ -1,7 +1,7 @@
 from app.core.settings import env_variables
 
 DEFAULT_MAIL_SERVICE = "smtp.gmail.com"
-DEFAULT_MAIL_PORT = 465
+DEFAULT_MAIL_PORT = 587
 
 NOTIFICATION_QUEUE = "notification_queue"
 NOTIFICATION_QUEUE_MAX_RETRIES = env_variables.notification_queue_max_retries
