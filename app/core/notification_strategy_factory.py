@@ -1,12 +1,14 @@
 from typing import cast
 
 from app.models.requests.notification_request import (
+    BrevoEmailNotificationRequest,
     EmailNotificationRequest,
     SMSNotificationRequest,
     TNotificationRequest,
     WhatsappNotificationRequest,
 )
 from app.strategies.base import NotifierStrategy
+from app.strategies.brevo_email import BrevoEmailStrategy
 from app.strategies.email import EmailStrategy
 from app.strategies.sms import SMSStrategy
 from app.strategies.whatsapp import WhatsappStrategy
@@ -17,6 +19,9 @@ def get_notification_strategy(
 ) -> NotifierStrategy[TNotificationRequest]:
     if isinstance(payload, EmailNotificationRequest):
         return cast(NotifierStrategy[TNotificationRequest], EmailStrategy())
+
+    if isinstance(payload, BrevoEmailNotificationRequest):
+        return cast(NotifierStrategy[TNotificationRequest], BrevoEmailStrategy())
 
     if isinstance(payload, SMSNotificationRequest):
         return cast(NotifierStrategy[TNotificationRequest], SMSStrategy())

@@ -21,6 +21,8 @@ class Settings(BaseModel):
     twilio_auth_token: str = get_env_or_throw("TWILIO_AUTH_TOKEN")
     whatsapp_sender_number: str = get_env_or_throw("WHATSAPP_SENDER_NUMBER")
     sms_sender_number: str = get_env_or_throw("SMS_SENDER_NUMBER")
+    brevo_api_key: str = get_env_or_throw("BREVO_API_KEY")
+    brevo_api_url: str = get_env_or_throw("BREVO_API_URL")
 
 
 env_variables = Settings()

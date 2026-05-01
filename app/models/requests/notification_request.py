@@ -70,12 +70,31 @@ class WhatsappNotificationRequest(BaseNotificationRequest):
         return self.recipient_phone_number
 
 
+class BrevoEmailNotificationRequest(BaseNotificationRequest):
+    type: Literal[NotificationTypeEnum.BREVO_EMAIL]
+
+    email_body: str
+    recipient_email: str
+    subject: str
+
+    @property
+    def body(self) -> str:
+        return self.email_body
+
+    @property
+    def recipient(self) -> str:
+        return self.recipient_email
+
+
 TNotificationRequest = TypeVar(
     "TNotificationRequest", bound=BaseNotificationRequest, contravariant=True
 )
 
 SendNotificationPayload = (
-    EmailNotificationRequest | SMSNotificationRequest | WhatsappNotificationRequest
+    EmailNotificationRequest
+    | SMSNotificationRequest
+    | WhatsappNotificationRequest
+    | BrevoEmailNotificationRequest
 )
 
 
