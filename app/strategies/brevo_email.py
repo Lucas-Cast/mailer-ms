@@ -1,11 +1,17 @@
 import httpx
 
 from app.core.settings import env_variables
+from app.models.entities.template import Template
 from app.models.requests.notification_request import BrevoEmailNotificationRequest
 from app.strategies.base import NotifierStrategy
 
 
 class BrevoEmailStrategy(NotifierStrategy[BrevoEmailNotificationRequest]):
+    def apply_template(
+        self, request: BrevoEmailNotificationRequest, template: Template
+    ) -> BrevoEmailNotificationRequest:
+        return request
+
     async def send_notification(self, request: BrevoEmailNotificationRequest) -> None:
         headers = {
             "api-key": env_variables.brevo_api_key,

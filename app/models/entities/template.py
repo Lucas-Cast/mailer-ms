@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 from uuid import uuid4
 
-from sqlalchemy import Column
+from sqlalchemy import JSON, Column
 from sqlmodel import DateTime, Field, Relationship
 
 from app.core.base_models import BaseSQLModel
@@ -14,7 +14,10 @@ class Template(BaseSQLModel, table=True):
     description: str | None = Field(default=None)
     subject: str
     body: str
-    variable_schema: dict[str, str] | None = Field(default=None)
+    variable_schema: dict[str, str] | None = Field(
+        default=None,
+        sa_column=Column(JSON, nullable=True),
+    )
     is_active: bool = Field(default=True)
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(UTC),

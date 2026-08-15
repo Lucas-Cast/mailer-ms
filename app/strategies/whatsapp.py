@@ -2,6 +2,7 @@ import json
 
 from app.core.settings import env_variables
 from app.core.twilio_client import get_async_twilio_client
+from app.models.entities.template import Template
 from app.models.requests.notification_request import WhatsappNotificationRequest
 from app.strategies.base import NotifierStrategy
 
@@ -9,6 +10,11 @@ WHATSAPP_SENDER_NUMBER = env_variables.whatsapp_sender_number
 
 
 class WhatsappStrategy(NotifierStrategy[WhatsappNotificationRequest]):
+    def apply_template(
+        self, request: WhatsappNotificationRequest, template: Template
+    ) -> WhatsappNotificationRequest:
+        return request
+
     async def send_notification(self, request: WhatsappNotificationRequest) -> None:
         async with get_async_twilio_client() as client:
             await client.messages.create_async(
