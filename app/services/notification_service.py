@@ -1,6 +1,6 @@
 from fastapi import Depends, HTTPException
 from pydantic import NameEmail
-from sqlalchemy import update
+from sqlmodel import select, text, update
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.broker import BrokerClient
@@ -46,6 +46,11 @@ class NotificationService:
                 error_message=str(e),
             )
             raise e
+
+    async def get_notification_logs(self) -> list[NotificationLog]:
+        statement = select(NotificationLog).order_by(text("timestamp DESC"))
+        result = await self._session.exec(statement)
+        return list(result.all())
 
     async def _apply_template(
         self, payload: SendNotificationPayload
