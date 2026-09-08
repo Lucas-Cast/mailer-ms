@@ -7,6 +7,7 @@ from app.core.auth import get_current_user
 from app.core.db import create_tables, shutdown_engine
 from app.core.seeds import run_seeds
 from app.routers.notification import router as notifications_router
+from app.routers.template import router as template_router
 from app.workers.consumer import main as start_consumer
 
 
@@ -37,3 +38,5 @@ app = FastAPI(lifespan=lifespan, dependencies=[Depends(get_current_user)])
 app.include_router(
     prefix="/notifications", router=notifications_router, tags=["notifications"]
 )
+
+app.include_router(prefix="/template", router=template_router, tags=["templates"])

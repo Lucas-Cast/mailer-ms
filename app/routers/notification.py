@@ -3,12 +3,20 @@ from typing import Annotated
 from fastapi import APIRouter, Body, Depends
 
 from app.docs.examples import send_notification_examples
+from app.models.entities.notification_log import NotificationLog
 from app.models.requests.notification_request import (
     SendNotificationPayload,
 )
 from app.services.notification_service import NotificationService
 
 router: APIRouter = APIRouter()
+
+
+@router.get("/")
+async def get_notification_logs(
+    notification_service: NotificationService = Depends(),
+) -> list[NotificationLog]:
+    return await notification_service.get_notification_logs()
 
 
 @router.post("/send", response_model=str)

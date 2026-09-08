@@ -1,12 +1,13 @@
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from pydantic import NameEmail
-from sqlalchemy import update
+from sqlmodel import select, text, update
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.broker import BrokerClient
 from app.core.db import get_async_session
 from app.core.notification_strategy_factory import get_notification_strategy
 from app.models.entities.notification_log import NotificationLog
+from app.models.entities.template import Template
 from app.models.enums.notification_status_enum import NotificationStatusEnum
 from app.models.requests.notification_request import (
     MessageBrokerPayload,
@@ -27,6 +28,7 @@ class NotificationService:
         self,
         payload: SendNotificationPayload,
     ) -> str:
+        payload = await self._apply_template(payload)
         log_id = await self.log_notification(payload)
 
         json_payload = MessageBrokerPayload(
@@ -44,6 +46,32 @@ class NotificationService:
                 error_message=str(e),
             )
             raise e
+
+    async def get_notification_logs(self) -> list[NotificationLog]:
+        statement = select(NotificationLog).order_by(text("timestamp DESC"))
+        result = await self._session.exec(statement)
+        return list(result.all())
+
+    async def _apply_template(
+        self, payload: SendNotificationPayload
+    ) -> SendNotificationPayload:
+        if payload.template_id is None:
+            return payload
+
+        template = await self._session.get(Template, payload.template_id)
+        if template is None or not template.is_active:
+            raise HTTPException(
+                status_code=404, detail="Template not found or inactive"
+            )
+
+        if template.notification_type_id != payload.type:
+            raise HTTPException(
+                status_code=400,
+                detail="Template notification type does not match the payload type",
+            )
+
+        strategy = get_notification_strategy(payload)
+        return strategy.apply_template(payload, template)
 
     async def send_notification(
         self,
