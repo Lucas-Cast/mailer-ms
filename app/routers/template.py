@@ -12,6 +12,13 @@ from app.services.template_service import TemplateService
 router: APIRouter = APIRouter()
 
 
+@router.get("/")
+async def get_templates(
+    template_service: Annotated[TemplateService, Depends()],
+) -> list[Template]:
+    return await template_service.get_templates()
+
+
 @router.post("/")
 async def create_template(
     payload: CreateTemplateRequest,

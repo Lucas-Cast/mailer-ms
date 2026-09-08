@@ -1,5 +1,6 @@
 from fastapi import Depends
 from sqlalchemy import update
+from sqlmodel import select, text
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.db import get_async_session
@@ -16,6 +17,11 @@ class TemplateService:
         session: AsyncSession = Depends(get_async_session),
     ):
         self._session = session
+
+    async def get_templates(self) -> list[Template]:
+        statement = select(Template).order_by(text("created_at DESC"))
+        result = await self._session.exec(statement)
+        return list(result.all())
 
     async def create_template(self, payload: CreateTemplateRequest) -> Template:
         template_entity = Template(
